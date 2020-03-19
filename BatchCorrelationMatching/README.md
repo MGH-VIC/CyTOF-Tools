@@ -1,6 +1,18 @@
 # Batch Correlation Matching
 Module for matching clusters across experimental runs using multiple correlations.
+Pipeline:
+1) Run ImportDataMaster
+2) Run ParallelCoordinatePlots
+3) Run sScatterPlot
+4) Run MinMaxRescale
+5) Run FilterSize
+6) Run CorrelationMatching
+7) Run FilterCorrResults
+8) Run GenerateMatchingPPT
+9) Manual matching through powerpoint visualization
+
 * Currently, importing functions into master script is suboptimal (To do)
+* Currently, Hungarian algorithm is implemented for multi-experiment matching but needs work implementing transitivity bias
 
 **ImportDataMaster**:
 Function for importing excel file from clustering in Vortex
