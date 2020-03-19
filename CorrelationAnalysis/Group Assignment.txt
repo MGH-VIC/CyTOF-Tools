@@ -1,0 +1,12 @@
+SampleID	GroupID
+c01_C57B6_DAY10_CD3+ T Cells _37p .fcs	Vax
+c01_Grp1_DR3_D51 _37p.fcs	Vax
+c02_C57B6_DAY10_CD3+ T Cells _37p .fcs	Vax
+c03_C57B6_DAY10_CD3+ T Cells _37p .fcs	Vax
+c04_C57B6_DAY10_CD3+ T Cells _37p .fcs	Naive
+c05_C57B6_DAY10_CD3+ T Cells _37p .fcs	Naive
+c06_C57B6_DAY10_CD3+ T Cells _37p .fcs	Naive
+c07_C57B6_DAY10_CD3+ T Cells _37p .fcs	Vax
+c08_C57B6_DAY10_CD3+ T Cells _37p .fcs	Naive
+c09_C57B6_DAY10_CD3+ T Cells _37p .fcs	Vax
+c10_C57B6_DAY10_CD3+ T Cells _37p .fcs	Vax
