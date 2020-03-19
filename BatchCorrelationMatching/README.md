@@ -1,6 +1,6 @@
 # Batch Correlation Matching
 Module for matching clusters across experimental runs using multiple correlations.
-Pipeline:
+To run pipeline:
 1) Run ImportDataMaster
 2) Run ParallelCoordinatePlots
 3) Run sScatterPlot
@@ -11,6 +11,7 @@ Pipeline:
 8) Run GenerateMatchingPPT
 9) Manual matching through powerpoint visualization
 
+Template for pipeline can be found in CorrelationMatchingExample.R
 * Currently, importing functions into master script is suboptimal (To do)
 * Currently, Hungarian algorithm is implemented for multi-experiment matching but needs work implementing transitivity bias
 
