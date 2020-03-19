@@ -1,0 +1,1 @@
+python "/Volumes/viclab$/Reeves Team/Josh Hess/gists/CytofTools/BostonGeneBatchCorrection/CommandBatchCorrection.py" --folder_dir "/Volumes/viclab$/Raju Paul/Josh Hess/NHP/Reference Only" --output "/Volumes/viclab$/Raju Paul/Josh Hess/NHP/Reference Only" --columns_to_keep "/Volumes/viclab$/Raju Paul/Josh Hess/NHP/Reference Only/Columns to Keep.xlsx" --cofactor 5 --export_means
