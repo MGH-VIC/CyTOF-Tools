@@ -182,8 +182,8 @@ RunEN = function(input,cv_type,export_coeff,export_coeff_img,export_cv,export_cv
 
 #Function for filtering the variables input to LDA based on accuracy
 FilterCoefficients = function(input,top_n){
-  #Function for filter results from RunIterativeLDA function and extracting
-  #top n variables to keep based on classification accuracy
+  #Function for filter results from function and extracting
+  #top n variables to keep based on coefficient magnitude
   
   #input: ReadData.R object or dataframe
   #return_table: returned object from RunIterativeLDA
