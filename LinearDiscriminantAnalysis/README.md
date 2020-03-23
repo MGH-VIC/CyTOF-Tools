@@ -8,8 +8,10 @@ To run pipeline:
 Template for pipeline can be found in ExampleMasterLDA.R
 
 **MasterLDA**:
-Function for running all combinations/pairwise comparisons between experimental groups for
-elastic net/lasso logistic regression.
+Function for running through all combinations of clusters (given a max size to use) for predicting
+class assignment based on cluster frequencies. This analysis should use two groups to train the LDA model on, and
+a 3rd class can be predicted to give a continuous response/assignment. This will show, for example, if some samples have
+an intermediate outcome/response compared to two extremes.
 * filename: Enter the name of your data file (If multiple files, use: list("File1name.xlsx","File2name.xlsx")) (Ex: filename = "Template.xlsx")
 * sheetname: Enter the name of the sheet of the data sheet you are using for calculations (If multiple sheets, use: list("Sheet1name.xlsx","Sheet2name.xlsx")) (Ex: sheetname = "Sheet1")
 * scale_clusters: Scale your data? (z-score) (Ex: scale_clusters = TRUE) --leave TRUE for equal representation of all variables
