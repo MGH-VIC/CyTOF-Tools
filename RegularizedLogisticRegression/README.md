@@ -11,7 +11,7 @@ Template for pipeline can be found in ExampleMasterEN.R
 
 **MasterEN**:
 Function for running all combinations/pairwise comparisons between experimental groups for
-elastic net/lass logistic regression.
+elastic net/lasso logistic regression.
 * filename: Enter the name of your data file (If multiple files, use: list("File1name.xlsx","File2name.xlsx")) (Ex: filename = "Template.xlsx")
 * sheetname: Enter the name of the sheet of the data sheet you are using for calculations (If multiple sheets, use: list("Sheet1name.xlsx","Sheet2name.xlsx")) (Ex: sheetname = "Sheet1")
 * scale_clusters: Scale your data? (z-score) (Ex: scale_clusters = TRUE) --leave TRUE for equal representation of all variables
