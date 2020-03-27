@@ -18,12 +18,24 @@ import utils
 
 
 
-def ReadCorrelationResults(Rs,Ps,clin_par):
+def ReadCorrelationResults(Rs,Ps,clin_par,group_data=None):
     """Function for reading correlation results from R and plotting tSNE"""
 
+    #Create a dictionary to return
+    return_dict = {}
     #Read each file
     rs = pd.read_excel(Rs)
     ps = pd.read_excel(Ps)
+    #Check if cluster assignment
+    if group_data is not None:
+        #Get the clusters from clustering correlation matrix
+        modules = pd.read_csv(group_data,sep="\t")
+        #Rename the group column of group data to be that for Modules
+        modules = modules.rename(columns={"group":"Module"})
+        #Remove the prefix "group" in the column of modules
+        modules["Module"] = modules['Module'].str.replace('group_', '')
+        #Update the dictionary
+        return_dict.update({"Modules":modules})
     #Rename the first column
     rs=rs.rename(columns = {'Unnamed: 0':'Cluster ID'})
     ps=ps.rename(columns = {'Unnamed: 0':'Cluster ID'})
@@ -36,8 +48,10 @@ def ReadCorrelationResults(Rs,Ps,clin_par):
     rs_keep = rs_keep.loc[~rs_keep["Cluster ID"].isin(keep)]
     ps_keep = ps[keep]
     ps_keep = ps_keep.loc[~ps_keep["Cluster ID"].isin(keep)]
+    #Update the dictionary
+    return_dict.update({"R":rs_keep,"P":ps_keep,"Columns":keep_og})
     #Return the dataframes
-    return {"R":rs_keep,"P":ps_keep,"Columns":keep_og}
+    return return_dict
 
 
 
@@ -117,17 +131,9 @@ def GridPlotDimRed(dict,filename,grid_shape,**kwargs):
 
         for area in [0.1, 1.0, 3.0]:
             ax.scatter([], [], c='k', alpha=0.3, s=area*60,label=str(area))
-        ax.legend(scatterpoints=1, frameon=False, labelspacing=0.3, title='-log10(p-value)',loc="upper right",prop={'size': 15})
+        ax.legend(scatterpoints=1, frameon=False, labelspacing=0.3, title='-log10(p-value)',loc="upper left",prop={'size': 15})
     #Save the plots
     plt.savefig(filename,dpi=400)
-
-
-
-
-
-
-
-
 
 
 
