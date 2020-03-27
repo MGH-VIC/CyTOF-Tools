@@ -5,29 +5,32 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import seaborn as sns
+from sklearn.cluster import SpectralClustering
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 #Import custom module
 import DimensionReductionPlots as reduce
 
 
+#------------------Reducing correlation matrix dimension and exporting plots-----------
 #Set home directory
 group_data = None
+#Path to R values
 Rs = Path("/Volumes/viclab$/Raju Paul/Josh Hess/Trauma Mendoza/Trauma Correlation/Live Cells (No Ref) 20000per k=22 c84 (Clusters 0.05)/R value.xlsx")
+#Path to p-values
 Ps = Path("/Volumes/viclab$/Raju Paul/Josh Hess/Trauma Mendoza/Trauma Correlation/Live Cells (No Ref) 20000per k=22 c84 (Clusters 0.05)/P value.xlsx")
+#Path to columns to keep
 clin_par = Path("/Volumes/viclab$/Raju Paul/Josh Hess/Trauma Mendoza/Trauma Correlation/Live Cells (No Ref) 20000per k=22 c84 (Clusters 0.05)/DimensionReduction/Columns to Keep.txt")
 
 dict = reduce.ReadCorrelationResults(Rs,Ps,clin_par,group_data)
 dict=reduce.ReduceDimensions(dict,method="umap",metric="euclidean",n_components=2,random_state=22)
-reduce.GridPlotDimRed(dict,filename="TraumaCorrelationReduction.jpeg",grid_shape=(7,5))
+reduce.GridPlotDimRed(dict,filename="TraumaCorrelationReduction.jpeg",grid_shape=(7,5)) #Change grid shape depending on number of clinical parameters (Ex: (7,5)=35 panels)
 
-#Now cluster the embedding
-from sklearn.cluster import SpectralClustering
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
-
+#----------------Clustering the correlation matrix-------------------
 pca = PCA(n_components=25,random_state=22).fit(dict['umap'].graph_.toarray())
 #Get the explained variance ratio from the pca object
-fig, ax = plt.subplots(figsize=(10,7))
-ax.plot(np.cumsum(pca.explained_variance_ratio_),linewidth=4)
+fig, ax = plt.subplots(figsize=(10,7)) #Change figure size if you need
+ax.plot(np.cumsum(pca.explained_variance_ratio_),linewidth=4) #Change line width for the plot if you need
 ax.set_xlabel('Number of Components',fontsize=15,labelpad=5)
 ax.set_ylabel('Cumulative Explained Variance',fontsize=15,labelpad=5)
 ax.tick_params(labelsize=15)
@@ -39,7 +42,7 @@ clustering = SpectralClustering(n_clusters=8,affinity="precomputed",random_state
 colors = {1:"red",2:"blue",3:"green",4:"brown",5:"pink",6:"purple",7:"orange",8:"black"}
 new_labs = pd.DataFrame(clustering.labels_+1,columns=["Module"])
 
-#Plot umap with module labels attached
+#---------------Plot the dimensin reduction result with cluster labels---------
 scatter_x = dict["embedding"][:,0]
 scatter_y = dict["embedding"][:,1]
 fig, ax = plt.subplots(figsize=(7,8))
@@ -54,7 +57,7 @@ ax.legend()
 plt.savefig("UMAP_SpectralClustering.jpeg",dpi=400)
 
 
-#Combine the cluster information with the clinical parameters to form heatmaps
+#---------Combine the cluster information with the clinical parameters to form heatmaps---------
 module_means = pd.concat([new_labs,dict["R"]],axis=1)
 module_means.columns = module_means.columns.str.replace(".", " ")
 module_means.to_excel("ModuleFull.xlsx")
