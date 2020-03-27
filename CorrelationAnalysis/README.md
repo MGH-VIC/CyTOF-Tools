@@ -1,5 +1,5 @@
 # Correlation Analysis to Clinical Measures
-Module for conducting correlation analysis to clinical measures followed by clustering into modules and dimension reduction.
+Module for conducting correlation analysis to clinical measures followed by clustering into modules and dimension reduction using t-SNE, UMAP or PHATE.
 To run pipeline:
 1) Open MasterCorrelationAnalysis.R
 2) Run CorrCalculation
