@@ -3,7 +3,8 @@
 #Check for missing packages and install if needed
 list.of.packages <- c("devtools","Rcpp","biclust","diptest","evtree","ggdendro","ggfortify","ggplot2","gplots","gdata","ggrepel",
                       "ggRandomForests","gridExtra","gtable","gtools","igraph","MASS","packcircles","plyr","randomForestSRC",
-                      "reshape2","pheatmap","readxl","raster","openxlsx","bindrcpp","stringi","statmod","tidyr","plotflow")
+                      "reshape2","pheatmap","readxl","raster","openxlsx","bindrcpp","stringi","statmod","tidyr","plotflow",
+                      "stringr","tidyverse")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 #Check for github packages
@@ -60,6 +61,8 @@ require("edgeR")
 require(RColorBrewer)
 require("tidyr")
 require(plotflow)
+require(stringr)
+require(tidyverse)
 
 #Import custom modules
 source("utils.R") #Sources utils function for phenoviewer_modified
