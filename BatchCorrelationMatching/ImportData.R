@@ -12,13 +12,14 @@ list_git = c("tchitchek-lab/SPADEVizR","trinker/plotflow")
 new.packages <- list_git[!(list_git %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install_github(new.packages,force=TRUE)
 #Check for Biomanager packages
-source("https://bioconductor.org/biocLite.R")
-biocLite()
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+#BiocManager::install(version = "3.10")
 list_bio = c("FlowSOM","flowCore","edgeR")
 new.packages <- list_bio[!(list_bio %in% installed.packages()[,"Package"])]
 if(length(new.packages)){
   for (pack in new.packages){
-    biocLite("flowCore", suppressUpdates = TRUE)
+    BiocManager::install(pack, suppressUpdates = TRUE)
   }
 }
 
