@@ -1,28 +1,28 @@
-#Cluster Scatterplot script
+#SpadevizR analysis
 #Joshua Hess
-
-
 #Check for missing packages and install if needed
 list.of.packages <- c("devtools","Rcpp","biclust","diptest","evtree","ggdendro","ggfortify","ggplot2","gplots","gdata","ggrepel",
                       "ggRandomForests","gridExtra","gtable","gtools","igraph","MASS","packcircles","plyr","randomForestSRC",
-                      "reshape2","pheatmap","readxl","raster","openxlsx","bindrcpp","stringi","statmod")
+                      "reshape2","pheatmap","readxl","raster","openxlsx","bindrcpp","stringi","statmod","tidyr","plotflow",
+                      "stringr","tidyverse")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 #Check for github packages
 require('devtools')
-list_git = c("tchitchek-lab/SPADEVizR")
-new.packages <- list_git[!(list_git %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install_github(new.packages)
-#Check for Biomanager packages
-source("https://bioconductor.org/biocLite.R")
-biocLite()
-list_bio = c("FlowSOM","flowCore","edgeR")
-new.packages <- list_bio[!(list_bio %in% installed.packages()[,"Package"])]
-if(length(new.packages)){
-  for (pack in new.packages){
-    biocLite("flowCore", suppressUpdates = TRUE)
-  }
-}
+# list_git = c("tchitchek-lab/SPADEVizR","trinker/plotflow")
+# new.packages <- list_git[!(list_git %in% installed.packages()[,"Package"])]
+# if(length(new.packages)) install_github(new.packages,force=TRUE)
+# #Check for Biomanager packages
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#   install.packages("BiocManager")
+# #BiocManager::install(version = "3.10")
+# list_bio = c("FlowSOM","flowCore","edgeR")
+# new.packages <- list_bio[!(list_bio %in% installed.packages()[,"Package"])]
+# if(length(new.packages)){
+#   for (pack in new.packages){
+#     BiocManager::install(pack, suppressUpdates = TRUE)
+#   }
+# }
 
 
 require(dplyr)
@@ -59,6 +59,10 @@ require("SPADEVizR")
 require(statmod)
 require("edgeR")
 require(RColorBrewer)
+require("tidyr")
+require(plotflow)
+require(stringr)
+require(tidyverse)
 
 #Import custom modules
 source("utils.R") #Sources utils function for phenoviewer_modified

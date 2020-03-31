@@ -1,9 +1,10 @@
-#Cluster Matching script
+#SpadevizR analysis
 #Joshua Hess
 #Check for missing packages and install if needed
 list.of.packages <- c("devtools","Rcpp","biclust","diptest","evtree","ggdendro","ggfortify","ggplot2","gplots","gdata","ggrepel",
                       "ggRandomForests","gridExtra","gtable","gtools","igraph","MASS","packcircles","plyr","randomForestSRC",
-                      "reshape2","pheatmap","readxl","raster","openxlsx","bindrcpp","stringi","statmod","tidyr","plotflow")
+                      "reshape2","pheatmap","readxl","raster","openxlsx","bindrcpp","stringi","statmod","tidyr","plotflow",
+                      "stringr","tidyverse")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 #Check for github packages
@@ -12,13 +13,14 @@ list_git = c("tchitchek-lab/SPADEVizR","trinker/plotflow")
 new.packages <- list_git[!(list_git %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install_github(new.packages,force=TRUE)
 #Check for Biomanager packages
-source("https://bioconductor.org/biocLite.R")
-biocLite()
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+#BiocManager::install(version = "3.10")
 list_bio = c("FlowSOM","flowCore","edgeR")
 new.packages <- list_bio[!(list_bio %in% installed.packages()[,"Package"])]
 if(length(new.packages)){
   for (pack in new.packages){
-    biocLite("flowCore", suppressUpdates = TRUE)
+    BiocManager::install(pack, suppressUpdates = TRUE)
   }
 }
 
@@ -59,11 +61,13 @@ require("edgeR")
 require(RColorBrewer)
 require("tidyr")
 require(plotflow)
+require(stringr)
+require(tidyverse)
 
 #Import custom modules
 source("utils.R") #Sources utils function for phenoviewer_modified
 
-
+         
 
 SetupTable = function(excel,save_new=FALSE,save_as = NULL,remove=NULL,remove_marker_string=NULL){
   #Function for setting up an excel document for cluster matching so that you dont have to use
