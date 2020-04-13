@@ -1,4 +1,4 @@
-#SpadevizR analysis
+#Cluster Matching script
 #Joshua Hess
 #Check for missing packages and install if needed
 list.of.packages <- c("devtools","Rcpp","biclust","diptest","evtree","ggdendro","ggfortify","ggplot2","gplots","gdata","ggrepel",
@@ -67,7 +67,6 @@ require(tidyverse)
 #Import custom modules
 source("utils.R") #Sources utils function for phenoviewer_modified
 
-         
 
 SetupTable = function(excel,save_new=FALSE,save_as = NULL,remove=NULL,remove_marker_string=NULL){
   #Function for setting up an excel document for cluster matching so that you dont have to use
@@ -96,9 +95,9 @@ SetupTable = function(excel,save_new=FALSE,save_as = NULL,remove=NULL,remove_mar
         new_names[i,2] = colnames(pheno)[i]
       }
     }
+    #Assign new column names to the pheno table
+    colnames(pheno) = new_names[,2]
   }
-  #Assign new column names to the pheno table
-  colnames(pheno) = new_names[,2]
   #Set up sheet for abundances
   abundance = pheno[c("Term","Cluster","Count")] %>% 
     tidyr::spread(key = Term,value = Count)
@@ -227,7 +226,7 @@ MultipleImportDataMaster = function(Excel_list,experiment_names,scatterplot_impo
   for (i in 1:length(Excel_list)){
     #Read the file and add to the results list
     results_list[[experiment_names[i]]] = ImportDataMaster(Excel_list[[i]],experiment_names[[i]],scatterplot_import,
-                                                           save_new,save_as,remove,pheno_cols)
+                                                           save_new,save_as,remove,remove_marker_string,pheno_cols)
 
   }
   #Return the data list
