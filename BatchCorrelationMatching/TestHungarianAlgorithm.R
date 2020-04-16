@@ -4,6 +4,8 @@
 #Check for missing packages and install if needed
 list.of.packages <- c("RcppHungarian","rowr")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library(RcppHungarian)
 library(rowr)
 
