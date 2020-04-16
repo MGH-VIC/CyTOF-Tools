@@ -30,13 +30,19 @@ Corr_test = MultiplePairwiseCorrelations(imported_data,method = "spearman",inclu
 
 
 
+#Test Hungarian optimization
+hungarian_results = HungarianOptimization(Corr_test)
+#Create list of results
+results_list = list()
+for (i in 1:length(hungarian_results)){
+  results_list[[i]] = hungarian_results[[i]][["Matches"]]
+}
+results_frame = do.call(cbind.fill,results_list)
+openxlsx::write.xlsx(results_frame,"HungarianMatchingSpearman.xlsx")
 
 
 
-
-
-Corr_results = Corr_test
-
+#Define Hungarian optimization functions
 HungarianOptimization = function(Corr_results){
   #Function for iterating through correlation results and applying hungarian algorithm
   #to each possible subset of clusters from each group normalized by total pairings to find
@@ -49,6 +55,7 @@ HungarianOptimization = function(Corr_results){
   
   #Iterate through the comparisons
   for (i in 1:length(comps)){
+    
     #Get the correlation results from this comparison
     tmp_results = Corr_results[[comps[i]]]
     #Get the correlation dataframe from this comparison
@@ -72,10 +79,18 @@ HungarianOptimization = function(Corr_results){
     names(hung) = c("Value","Matches")
     #Use the indexed hung from the Hungarian solver to extract the cluster names
     for (j in 1:nrow(hung[["Matches"]])){
+      
       #Get the cluster from grp a
       clust_a = rownames(corr)[as.numeric(hung[["Matches"]][j,1])]
       #Get the cluster from grp b
-      clust_b = colnames(corr)[as.numeric(hung[["Matches"]][j,1])]
+      clust_b = colnames(corr)[as.numeric(hung[["Matches"]][j,2])]
+      
+      #Check if clust_b is emppy
+      if (is_empty(clust_b)){
+        #Assign NA value
+        clust_b = NA
+      }
+      
       #Extract the corresponding cluster from group one
       hung[["Matches"]][j,1] = clust_a
       #Extract the corresponding cluster from group one
