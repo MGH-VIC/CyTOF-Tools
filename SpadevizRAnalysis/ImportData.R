@@ -68,6 +68,18 @@ require(tidyverse)
 source("utils.R") #Sources utils function for phenoviewer_modified
 
 
+#Get data for group1 (scatterplot import will require a filled out sheet!)
+#excel = "Z:/Raju Paul/Q vax Human/Normalization/CytoNorm/Omiq Analysis/06042020/CSV FlowSOM Export/SpadeVizR/Grp1Grp5flowSOM.xlsx"
+#scatterplot_import=TRUE
+#save_new=FALSE
+#save_as=NULL
+#pheno_cols=c(1:5)
+#experiment_name = "Grp1Grp5flowSOM"
+#remove_marker_string = NULL
+#remove=NULL
+
+
+
 SetupTable = function(excel,save_new=FALSE,save_as = NULL,remove=NULL,remove_marker_string=NULL){
   #Function for setting up an excel document for cluster matching so that you dont have to use
   #Excel functions for everything and that dont work
@@ -101,6 +113,15 @@ SetupTable = function(excel,save_new=FALSE,save_as = NULL,remove=NULL,remove_mar
   #Set up sheet for abundances
   abundance = pheno[c("Term","Cluster","Count")] %>% 
     tidyr::spread(key = Term,value = Count)
+  
+  #Ensure the abundance data is numeric
+  abundance = as.data.frame(do.call(cbind,lapply(abundance, function(x) as.numeric(as.character(x)))))
+  #Ensure raw data is numeric
+  data$Cluster = as.numeric(as.character(data$Cluster))
+  data$Count = as.numeric(as.character(data$Count))
+  #Ensure pheno data is numeric
+  pheno$Cluster = as.numeric(as.character(pheno$Cluster))
+  pheno$Count = as.numeric(as.character(pheno$Count))
   
   #Create list to store all of the data
   list_of_datasets <- list("raw" = data, "pheno" = pheno,"abun"= abundance,"filename"=excel)
