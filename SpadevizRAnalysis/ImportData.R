@@ -157,10 +157,19 @@ ImportSpadeVizR = function(files,scatterplot_import=TRUE,pheno_cols=NULL){
       samnames = as.data.frame(unique(colnames(cluster.abundances)));colnames(samnames) = c("sample")
       #Add column to fill in for the group
       samnames$Group = ''
-      #Get the name of the excel sheet and modify for export
-      grp_name = paste("groups_",gsub('.xlsx','',files[["filename"]]),'.xlsx',sep='')
+      
+      #Set index
+      idx = 1
+      #Check if the group name file already exists
+      while (file.exists(grp_name)){
+        #Get the name of the excel sheet and modify for export
+        grp_name = paste("groups_",gsub('.xlsx','',files[["filename"]]),"_",idx,'.xlsx',sep='')
+        #Update the index
+        idx = idx + 1
+      }
       #Export the table as an excel file for the user to fill out
       openxlsx::write.xlsx(samnames,grp_name)
+      
     }else{
       #Just put grp name as null
       grp_name = NULL
