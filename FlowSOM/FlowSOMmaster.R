@@ -22,7 +22,7 @@ source("clustering_data_import.R")
 
 
 #Set your working directory as the file that stores your data
-setwd("/Users/reevesteammm2/Desktop/FlowSOM/...")
+setwd("C:/Users/Ruxandra Sirbulescu/Desktop/Trauma-live-cells/...")
 
 #Input name for analysis result (Can help to add dates on the end)
 analysis_name = "20190710"
@@ -31,18 +31,18 @@ analysis_name = "20190710"
 files_list = list.files(pattern="*.fcs")
 
 #Read the full files in your dataset (all files in your files_list)
-temp_data = lapply(files_list,data.read.full)
+temp_data = lapply(files_list,ReadFiles)
 full_data = do.call(rbind,temp_data)
 
 #Get normalization parameters (percentiles for each parameter that you input for the full dataset)
-norm_parameter = get.normalize(full_data,percentile = 0.995, cols_to_use = c(3,18:52,60))
+norm_parameter = GetNormParameters(full_data,percentile = 0.995, cols_to_use = c(3,18:52,60))
 
 #Filter your data to the percentile that you choose (Will throw out the top percentile)
 #Think about whether you want to do this for the full, combined datasets, or for each individual dataset
-filtered_input = data.filtering(data_to_filter = full_data,percentile = 0.995,cols_to_use = c(3,18:52,60))
+filtered_input = FilterData(data_to_filter = full_data,percentile = 0.995,cols_to_use = c(3,18:52,60))
 
 #subsample the full data
-subsampled_data = data.subsample(filtered_input,perc_of_total = 0.1)
+subsampled_data = DataSubsample(filtered_input,perc_of_total = 0.1)
 
 #Run the data normalization function for the samples
 #!Must have cols_to_use the same as for get.normalize function!

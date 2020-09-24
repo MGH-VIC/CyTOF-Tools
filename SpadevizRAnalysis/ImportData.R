@@ -160,6 +160,8 @@ ImportSpadeVizR = function(files,scatterplot_import=TRUE,pheno_cols=NULL){
       
       #Set index
       idx = 1
+      #Set group name
+      grp_name = paste("groups_",gsub('.xlsx','',files[["filename"]]),"_",idx,'.xlsx',sep='')
       #Check if the group name file already exists
       while (file.exists(grp_name)){
         #Get the name of the excel sheet and modify for export
