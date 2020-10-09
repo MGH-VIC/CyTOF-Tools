@@ -63,10 +63,13 @@ GeneratePPT = function(ImportDataMaster_list,ppt_name){
       #ph_with_img(type = "body", str = "body (index 1) is text", index = 1) %>% 
       # ph_with_img(type = "body", index = 1, src = Grp1_cluster_file, height = 3.5, width = 4.58 ) %>%
       # ph_with_img(type = "body", index = 2, src = Grp2_cluster_file, height = 3.5, width = 4.58 )
-      ph_with_img_at(src = Grp1_cluster_file, height = 3.4, width = 5.1, left = 0.1, top = 0) %>%
+        #ph_with(value = Grp1_cluster_file, height = 3.4, width = 5.1, left = 0.1, top = 0) %>%
+        ph_with(value = external_img(Grp1_cluster_file),location = ph_location(left = 0.1, top = 0,
+                                                                 width = 5.1, height = 3.4)) %>%
       #ph_with_img_at(src = Grp2_cluster_file, height = 3.4, width = 5.1, left = 0.1, top = 3.4)%>%
       
-      ph_with_img_at(src = Grp1_scatter_file, height = 2, width = 2, left = 5.32, top = 0.55)
+        ph_with(value = external_img(Grp1_scatter_file), location = ph_location(left = 5.32, top = 0.55,
+                                                                width = 2, height = 2))
      # ph_with_img_at(src = Grp2_scatter_file, height = 2, width = 2, left = 5.32, top = 3.75)
     #Remove the temporary files
     file.remove(Grp1_cluster_file, Grp1_scatter_file)
