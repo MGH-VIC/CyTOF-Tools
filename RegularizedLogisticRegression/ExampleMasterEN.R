@@ -29,9 +29,11 @@ export_cv = TRUE
 export_cv_img = TRUE
 #How many cores to use for the calculations? (Ex: 10)
 num_cores = 8
+#How many iterations to use for resampling
+iterations = 1000
 #Set the top n coefficient models
 top_n = 30
 
 #Run function for all pairwise elastic nets
 results = MasterEN(filename,sheetname,group_col,groups,cell_cols,not_cell_cols,scale_clusters,cluster_prefix,
-                  cv_type,export_coeff,export_coeff_img,export_cv,export_cv_img,num_cores,top_n)
+                  cv_type,export_coeff,export_coeff_img,export_cv,export_cv_img,num_cores,iterations,top_n)

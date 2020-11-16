@@ -29,7 +29,6 @@ not_cell_cols = NULL
 group_col = 3
 #Which groups are you wanting to use? (Ex. groups = c(1,2) if numbered Ex. groups = c("Vaccinated","Naive") if strings)
 groups = c(1,2)
-
 #Run the correlation calculation
 corr_results = CorrCalculation(filename,sheetname,group_col,cell_cols,not_cell_cols,corr_type,export,
                                r_export_name,p_export_name,cluster_prefix)
