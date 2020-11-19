@@ -15,7 +15,7 @@ source("ReadData.R")
 
 
 #Linear Discriminant Analysis function
-RunLDA = function(input,cv_type,export_coeff,num_cores){
+RunLDA = function(input,cv_type,export_coeff,num_cores,iterations=1000){
   #Function for running LDA after reading data. If not using ReadData.R function, the dataframe must be compatible with the
   #given format
   
@@ -45,7 +45,7 @@ RunLDA = function(input,cv_type,export_coeff,num_cores){
   #Set up cross validation parameters - bootstrap CV or repeated CV
   if (cv_type == "bootstrap"){
     custom <- caret::trainControl(method = "boot",
-                                  number = 1000,
+                                  number = iterations,
                                   p = 0.75,
                                   verboseIter = TRUE, 
                                   summaryFunction = multiClassSummary,
@@ -53,7 +53,7 @@ RunLDA = function(input,cv_type,export_coeff,num_cores){
   } else if (cv_type == "repeated"){
     custom <- caret::trainControl(method = "repeatedcv",
                                   number = 4,
-                                  repeats = 100,
+                                  repeats = iterations,
                                   verboseIter = TRUE, 
                                   summaryFunction = multiClassSummary,
                                   savePredictions="final",returnData = TRUE,returnResamp = "all")
@@ -87,7 +87,7 @@ RunLDA = function(input,cv_type,export_coeff,num_cores){
 
 
 #Function for iterative classification
-RunIterativeLDA = function(input,cv_type,export_results,num_cores){
+RunIterativeLDA = function(input,cv_type,export_results,num_cores,iterations=1000){
   #Function for running LDA over each cluster in the dataset. Input must be a ReadData.R object or a
   #dataframe compatible with the code.
   
@@ -129,10 +129,12 @@ RunIterativeLDA = function(input,cv_type,export_results,num_cores){
     print(paste("Running LDA for",colnames(input)[1]))
     print(paste('Cluster ',k,"/",num_cols,sep=''))
     #Run the LDA function
-    tmp_model = RunLDA(input = tmp_subset, cv_type, export_coeff=FALSE,num_cores)
+    tmp_model = RunLDA(input = tmp_subset, cv_type, export_coeff=FALSE,num_cores,iterations)
     
     #Add the list_per_range to the result_list so we can store all ranges in a single structure
     result_list[[k]] = tmp_model
+    #Close the connections
+    closeAllConnections()
   }
   
   #Get the names for your list object
@@ -211,7 +213,7 @@ FilterIterativeLDA = function(input,return_table,top_n){
 
 
 #Function for assessing model permutations
-PermutativeLDA = function(input,cv_type,max_size,export_results,num_cores){
+PermutativeLDA = function(input,cv_type,max_size,export_results,num_cores,iterations=1000){
   #Function for running through all combinations of variables and running LDA
   
   #input: ReadData.R object or dataframe
@@ -252,7 +254,9 @@ PermutativeLDA = function(input,cv_type,max_size,export_results,num_cores){
       #Create dataframe with only those names as input
       inLDA = input[,which(colnames(input) %in% tmp_nms)]
       #Run the LDA function
-      RunLDA(inLDA,cv_type,FALSE,num_cores)
+      RunLDA(inLDA,cv_type,FALSE,num_cores,iterations)
+      #Close connections
+      closeAllConnections()
     })
     #Change the names of the list to reflect cell populations
     names(result_list[[k]]) = nms

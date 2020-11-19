@@ -31,9 +31,11 @@ max_size = 2
 new_groups = c(1,2,3)
 #How many cores to use for the calculations? (Ex: 10)
 num_cores = 8
+#How many interations to use for resampling
+iterations = 10
 
 #Run the LDA pipeline
 results = MasterLDA(filename,sheetname,group_col,groups,cell_cols,not_cell_cols,scale_clusters,cluster_prefix,
                      cv_type,export_results_iterative,num_cores,
                      top_n,export_results_permutative,
-                     max_size,new_groups)
+                     max_size,new_groups,iterations)
