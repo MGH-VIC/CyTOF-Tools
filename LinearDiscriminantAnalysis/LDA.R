@@ -9,13 +9,15 @@ require(doParallel)
 require(MLmetrics)
 require(varhandle)
 require(openxlsx)
+require(sjmisc)
+require(rlist)
 #Import custom function
 source("ReadData.R")
 
 
 
 #Linear Discriminant Analysis function
-RunLDA = function(input,cv_type,export_coeff,num_cores,iterations=1000){
+RunLDA = function(input,cv_type,export_coeff,num_cores){
   #Function for running LDA after reading data. If not using ReadData.R function, the dataframe must be compatible with the
   #given format
   
@@ -39,13 +41,12 @@ RunLDA = function(input,cv_type,export_coeff,num_cores,iterations=1000){
   #Set up 'Group' column of data to be a factor
   input$Group = as.factor(input$Group)
   levels(input$Group) <- make.names(levels(factor(input$Group)))
-  #input = input %>%
-    #mutate_at(vars(-Group),funs(c(unfactor(.))))
+  input[,-ncol(input)] = sapply(input[,-ncol(input)], as.numeric)
   
   #Set up cross validation parameters - bootstrap CV or repeated CV
   if (cv_type == "bootstrap"){
     custom <- caret::trainControl(method = "boot",
-                                  number = iterations,
+                                  number = 1000,
                                   p = 0.75,
                                   verboseIter = TRUE, 
                                   summaryFunction = multiClassSummary,
@@ -53,7 +54,7 @@ RunLDA = function(input,cv_type,export_coeff,num_cores,iterations=1000){
   } else if (cv_type == "repeated"){
     custom <- caret::trainControl(method = "repeatedcv",
                                   number = 4,
-                                  repeats = iterations,
+                                  repeats = 5,
                                   verboseIter = TRUE, 
                                   summaryFunction = multiClassSummary,
                                   savePredictions="final",returnData = TRUE,returnResamp = "all")
@@ -85,9 +86,8 @@ RunLDA = function(input,cv_type,export_coeff,num_cores,iterations=1000){
 }
 
 
-
 #Function for iterative classification
-RunIterativeLDA = function(input,cv_type,export_results,num_cores,iterations=1000){
+RunIterativeLDA = function(input,cv_type,export_results,num_cores){
   #Function for running LDA over each cluster in the dataset. Input must be a ReadData.R object or a
   #dataframe compatible with the code.
   
@@ -99,6 +99,14 @@ RunIterativeLDA = function(input,cv_type,export_results,num_cores,iterations=100
   #Check to see if getting data from ReadData Function
   if(class(input) == "list"){
     print("Detected a list of data files")
+    #Change column names to be cluster appended
+    colnames(input[["Clusters"]]) = paste("Cluster",colnames(input[["Clusters"]]))
+    
+    #Convert columns to numeric
+    for (i in 1:ncol(input[["Clusters"]])){
+      input[["Clusters"]][i]= sapply(input[["Clusters"]][i],as.numeric)
+    }
+
     #Get the cluster data and combine it with the group data
     input = as.data.frame(cbind(input[["Clusters"]],input[["Group"]]))
     #Fix the column names for the group column
@@ -113,11 +121,16 @@ RunIterativeLDA = function(input,cv_type,export_results,num_cores,iterations=100
     #Get the names of the clusters
     nms = colnames(input)[1:num_cols]
   }
-  
+
   #Loop for running all of the models that you indicated
   result_list = list()
+  #Create a counter
+  t = 1
+  #Create list of working items
+  works =  c()
+  #Iterate
   for (k in 1:num_cols){
-    
+
     #Obtain only the combinations from the data in the list element
     tmp_subset = as.data.frame(input[,k])
     colnames(tmp_subset) = colnames(input)[k]
@@ -126,19 +139,30 @@ RunIterativeLDA = function(input,cv_type,export_results,num_cores,iterations=100
     colnames(tmp_subset)[ncol(tmp_subset)] = "Group"
     
     #Print Updates
-    print(paste("Running LDA for",colnames(input)[1]))
+    print(paste("Running LDA for",colnames(tmp_subset)[1]))
     print(paste('Cluster ',k,"/",num_cols,sep=''))
-    #Run the LDA function
-    tmp_model = RunLDA(input = tmp_subset, cv_type, export_coeff=FALSE,num_cores,iterations)
     
-    #Add the list_per_range to the result_list so we can store all ranges in a single structure
-    result_list[[k]] = tmp_model
-    #Close the connections
-    closeAllConnections()
+    #Try to run LDA (if does not converge, model will not be added to the list of results)
+    try_list = try(
+        {
+      #Run the LDA function
+      tmp_model = RunLDA(input = tmp_subset, cv_type, export_coeff=FALSE,num_cores)
+      }
+    ,silent=TRUE
+    )
+    #Check if this cluster produces an error
+    if (!sjmisc::str_contains(try_list[[1]],"Error")){
+      #Add the list_per_range to the result_list so we can store all ranges in a single structure
+      result_list[[t]]= tmp_model
+      #Add the index to the list
+      works[t] = k 
+      #Update the index
+      t = t +1
+    }
   }
-  
+
   #Get the names for your list object
-  names(result_list) = nms
+  names(result_list) = nms[works]
   
   return_list = list()
   print('Concatenating Results...')
@@ -189,6 +213,14 @@ FilterIterativeLDA = function(input,return_table,top_n){
   #return_table: returned object from RunIterativeLDA
   #top_n: keep top n performers based on accuracy of classification
   
+  #Change column names to be cluster appended
+  colnames(input[["Clusters"]]) = paste("Cluster",colnames(input[["Clusters"]]))
+  
+  #Convert columns to numeric
+  for (i in 1:ncol(input[["Clusters"]])){
+    input[["Clusters"]][i]= sapply(input[["Clusters"]][i],as.numeric)
+  }
+  
   #Filter the return table
   filt = return_table %>%
     arrange(desc(Resamples_Accuracy))%>%
@@ -211,9 +243,8 @@ FilterIterativeLDA = function(input,return_table,top_n){
 
 
 
-
 #Function for assessing model permutations
-PermutativeLDA = function(input,cv_type,max_size,export_results,num_cores,iterations=1000){
+PermutativeLDA = function(input,cv_type,max_size,export_results,num_cores){
   #Function for running through all combinations of variables and running LDA
   
   #input: ReadData.R object or dataframe
@@ -254,14 +285,15 @@ PermutativeLDA = function(input,cv_type,max_size,export_results,num_cores,iterat
       #Create dataframe with only those names as input
       inLDA = input[,which(colnames(input) %in% tmp_nms)]
       #Run the LDA function
-      RunLDA(inLDA,cv_type,FALSE,num_cores,iterations)
-      #Close connections
-      closeAllConnections()
-    })
+      RunLDA(inLDA,cv_type,FALSE,num_cores)
+    }
+    )
     #Change the names of the list to reflect cell populations
     names(result_list[[k]]) = nms
     #Print update on what size model is being used
     print(paste('Finihsed Models ',k,'/',max_size,sep = ""))
+    #Close connections
+    closeAllConnections()
   }
   
   #Extract the highest accuracy model by cross validation from each result in result_list
@@ -312,7 +344,6 @@ PermutativeLDA = function(input,cv_type,max_size,export_results,num_cores,iterat
 }
 
 
-
 #Function for plotting projection for each LDA model from PermutativeLDA
 ProjectionsPermutativeLDA = function(input, og_dat = NULL, new_groups = NULL){
   #Function for plotting projection for each LDA model from PermutativeLDA
@@ -329,10 +360,21 @@ ProjectionsPermutativeLDA = function(input, og_dat = NULL, new_groups = NULL){
     }
     #Change the groups arguments in ReadData.R Object
     read_new = do.call(ReadData,og_dat[["Args"]])
+    #Change column names to be cluster appended
+    colnames(read_new[["Clusters"]]) = paste("Cluster",colnames(read_new[["Clusters"]]))
+    
+    #Convert columns to numeric
+    for (i in 1:ncol(read_new[["Clusters"]])){
+      read_new[["Clusters"]][i] = sapply(read_new[["Clusters"]][i],as.numeric)
+    }
+    
     #Get the cluster data and combine it with the group data
     in_dat = as.data.frame(cbind(read_new[["Clusters"]],read_new[["Group"]]))
-    #Fix the column names for the group column
+    #Change column names
     colnames(in_dat)[ncol(in_dat)] = "Group"
+    #Mutate data
+    # input[,-ncol(input)] = sapply(input[,-ncol(input)], as.numeric)
+    
   }else{
     #Set the in_dat as the DataUsed in the input
     in_dat = input[["DataUsed"]]
@@ -341,7 +383,7 @@ ProjectionsPermutativeLDA = function(input, og_dat = NULL, new_groups = NULL){
   #Get the current working directory
   home_dir = getwd()
   #Create a new directory to store the results
-  dir.create("LDA Projections")
+  dir.create("LDA Projections", showWarnings = FALSE)
   #Move to the new directory
   setwd("LDA Projections")
   #Extract the predictions and plots for all models
@@ -363,12 +405,15 @@ ProjectionsPermutativeLDA = function(input, og_dat = NULL, new_groups = NULL){
         
         #Get only the cluster data for input to the LDA predictions
         pred_dat = as.data.frame(mod_dat[,which(names(mod_dat)%in%clusters)])
+        pred_dat = as.data.frame(sapply(pred_dat, as.numeric))
+        
         #Reset the column names (If the #cols=1, then R drops the column names)
         if (ncol(pred_dat)<2){
           colnames(pred_dat) = paste("`",clusters,"`",sep = "")
         }else{
           colnames(pred_dat) = paste("`",colnames(pred_dat),"`",sep = "")
         }
+        
         #Predict the dataset on the LDA model
         plda <- predict(object = mod,
                         newdata = pred_dat)
