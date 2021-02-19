@@ -13,6 +13,7 @@ library(Biobase)
 # Set working directory
 #setwd("Z:/HDI-004-MP-Kidney Tranplant/Experiments/20191205/FCS-renamed")
 #setwd("Z:/HDI-004-MP-Kidney Tranplant/Experiments/20191205/FCS - Dec 2019") 
+#setwd("Z:/HDI-004-MP-Kidney Tranplant/Experiments/20190221/FCS")
 setwd("Z:/HDI-004-MP-Kidney Tranplant/Experiments/20190221/FCS")
 PrimaryDirectory <- getwd()
 

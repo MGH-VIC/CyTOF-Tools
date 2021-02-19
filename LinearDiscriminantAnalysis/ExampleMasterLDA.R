@@ -12,11 +12,11 @@ cluster_prefix = NULL
 #Which columns are you using as cells for calculation? (Variables in your excel sheet)
 cell_cols = 20:31
 #Which columns are you using as clinical measures? If none, use NULL and calculation will only be run for cells. (Variables in your excel sheet)
-not_cell_cols = 2:5
+not_cell_cols = NULL
 #Which column indicates the groups you are using? (Variables in your excel sheet)
 group_col = 3
 #Which groups are you wanting to use? (Ex. groups = c(1,2,3) if numbered Ex. groups = c("Vaccinated","Naive","Vax Sick") if strings)
-groups = c(1,2)
+groups = c(3,1)
 #Which type of cross-validation (Options are "repeated" or "bootstrap")
 cv_type = "repeated"
 #Export an excile file containing performance metrics per cluster in iterative LDA?
