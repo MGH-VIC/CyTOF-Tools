@@ -11,7 +11,7 @@ source("EN.R")
 
 #Create function for running elastic net for each group in a dataset
 MasterEN = function(filename,sheetname,group_col,groups,cell_cols,not_cell_cols,scale_clusters=TRUE,cluster_prefix=NULL,
-                    cv_type,export_coeff,export_coeff_img,export_cv,export_cv_img,num_cores,iterations,top_n){
+                    cv_type,export_coeff,export_coeff_img,export_cv,export_cv_img,num_cores,sampling,top_n){
   #Function for running elastic net over all combinations of groups in an excel file
   #Inputs are the same as RunEN function and ReadData.R function
   
@@ -27,7 +27,7 @@ MasterEN = function(filename,sheetname,group_col,groups,cell_cols,not_cell_cols,
     #Print an update
     print(paste('Running Elastic Net for groups:',paste(grp_comb[[i]],collapse="-"),sep = " "))
     #Run elastic net
-    tmp_EN = RunEN(data,cv_type,export_coeff,export_coeff_img,export_cv,export_cv_img,num_cores,iterations,top_n)
+    tmp_EN = RunEN(data,cv_type,export_coeff,export_coeff_img,export_cv,export_cv_img,num_cores,sampling,top_n)
     #Print an update
     print(paste('Finished Elastic Net for groups:',paste(grp_comb[[i]],collapse="-"),sep = " "))
     #Add this model to the return list

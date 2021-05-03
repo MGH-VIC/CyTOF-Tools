@@ -14,7 +14,7 @@ source("ReadData.R")
 
 
 #Logistic Elastic Net Function
-RunEN = function(input,cv_type,export_coeff,export_coeff_img,export_cv,export_cv_img,num_cores,iterations=1000,top_n=NULL){
+RunEN = function(input,cv_type,export_coeff,export_coeff_img,export_cv,export_cv_img,num_cores,sampling = NULL,top_n=NULL){
   
   #Function for running EN after reading data. If not using ReadData.R function, the dataframe must be compatible with the
   #given format
@@ -48,18 +48,18 @@ RunEN = function(input,cv_type,export_coeff,export_coeff_img,export_cv,export_cv
   #Set up cross validation parameters - bootstrap CV or repeated CV
   if (cv_type == "bootstrap"){
     custom <- caret::trainControl(method = "boot",
-                                  number = iterations,
+                                  number = 1000,
                                   p = 0.75,
                                   verboseIter = TRUE, 
                                   summaryFunction = multiClassSummary,
-                                  savePredictions="final",returnData = TRUE,returnResamp = "all")
+                                  savePredictions="final",returnData = TRUE,returnResamp = "all",sampling=sampling)
   } else if (cv_type == "repeated"){
     custom <- caret::trainControl(method = "repeatedcv",
                                   number = 4,
-                                  repeats = iterations,
+                                  repeats = 100,
                                   verboseIter = TRUE, 
                                   summaryFunction = multiClassSummary,
-                                  savePredictions="final",returnData = TRUE,returnResamp = "all")
+                                  savePredictions="final",returnData = TRUE,returnResamp = "all",sampling=sampling)
   }
   
   #Run logistic elastic net regression
