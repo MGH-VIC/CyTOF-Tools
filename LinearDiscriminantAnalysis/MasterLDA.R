@@ -12,7 +12,7 @@ source("LDA.R")
 
 #Function for complete LDA analysis pipeline
 MasterLDA = function(filename,sheetname,group_col,groups,cell_cols,not_cell_cols,scale_clusters=TRUE,cluster_prefix=NULL,
-                     cv_type,export_results_iterative,num_cores,
+                     cv_type,export_results_iterative,num_cores=1,
                      top_n,export_results_permutative,
                      max_size,
                      new_groups = NULL){

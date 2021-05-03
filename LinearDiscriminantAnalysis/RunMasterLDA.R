@@ -29,8 +29,7 @@ export_results_permutative = TRUE
 max_size = 2
 #What are the new group assignments for LDA predictions and projections (include those you uused in "groups" argument plus any more for projection of continuous change)
 new_groups = c("FRS-29-39","FRS-over-40","Healthy")
-#How many cores to use for the calculations? (Ex: 10)
-num_cores = 1
+
 
 #Run the LDA pipeline
 results = MasterLDA(filename,sheetname,group_col,groups,cell_cols,not_cell_cols,scale_clusters,cluster_prefix,

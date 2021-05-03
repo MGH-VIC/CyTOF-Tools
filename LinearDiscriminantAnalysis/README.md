@@ -1,5 +1,4 @@
 # Linear Discriminant Analysis workflow
-Note: Set number of cores to one. Higher values cause issues with running the code.
 
 Module for running linear discriminant
 To run pipeline:
@@ -28,4 +27,3 @@ an intermediate outcome/response compared to two extremes.
 * export_results_permutative: Export an image containing performance metrics for combinations of clusters? (Ex: export_results_permutative = TRUE)
 * max_size: Maxmimum number of clusters per combination to test? (Ex: max_size = 2)
 * new_groups: What are the new group assignments for LDA predictions and projections (include those you uused in "groups" argument plus any more for projection of continuous change) (Ex: new_groups = c(1,2,3))
-* num_cores: How many cores to use for the calculations? (Ex: num_cores = 8)
