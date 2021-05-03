@@ -1,4 +1,6 @@
 # Linear Discriminant Analysis workflow
+Note: Set number of cores to one. Higher values cause issues with running the code.
+
 Module for running linear discriminant
 To run pipeline:
 1) Data must be clustered
